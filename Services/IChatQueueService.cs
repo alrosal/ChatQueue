@@ -4,5 +4,5 @@ public interface IChatQueueService
 {
     bool AddToQueue(string sessionId);
     void AssignToAgent();
-    void PollQueue();
+    void PollSessions();
 }

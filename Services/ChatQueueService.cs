@@ -14,7 +14,7 @@ public class ChatQueueService : IChatQueueService
     public ChatQueueService(IMockData mockData)
     {
         _queue = new Queue<ChatSessionViewModel>();
-        _mockData = mockData;        
+        _mockData = mockData;
     }
 
     public bool AddToQueue(string sessionId)
@@ -47,7 +47,7 @@ public class ChatQueueService : IChatQueueService
                 }
             }
 
-            var newSession = new ChatSessionViewModel { SessionId = sessionId };
+            var newSession = new ChatSessionViewModel { SessionId = sessionId, IsActive = true };
             _queue.Enqueue(newSession);
 
             return true; // Successfully added to queue
@@ -71,41 +71,41 @@ public class ChatQueueService : IChatQueueService
         }
     }
 
-    public void PollQueue()
-    {
-        while (_queue.Any())
-        {
-            foreach (var session in _queue)
-            {
-                if ((DateTime.Now - session.PolledDate).TotalSeconds > 3)
-                {
-                    _queue.Dequeue();
-                    Console.WriteLine($"Session {session.SessionId} was not assigned. Removed from Queue.");
-
-                    if (_queue == null || _queue.Count < 1)
-                        break;
-                }
-            }
-        }
-    }
-
     public void AssignToAgent()
     {
-        while (_queue.Any())
+        try
         {
-            var agent = GetNextAvailableAgent();
+            while (_queue.Any())
+            {
+                var session = _queue.Peek();
+                
+                if (session.IsActive)
+                {
+                    var agent = GetNextAvailableAgent();
 
-            if (agent != null)
-            {
-                var session = _queue.Dequeue();
-                agent.AssignedSessions = agent.AssignedSessions + 1;
-                Console.WriteLine($"Session {session.SessionId} assigned to Agent {agent.Id} : {agent.AssignedSessions} assigned sessions with capacity of {agent.Capacity} at {DateTime.Now}.");
+                    if (agent != null)
+                    {
+                        var dequeuedSession = _queue.Dequeue();
+                        agent.AssignedSessions = agent.AssignedSessions + 1;
+                        Console.WriteLine($"Session {dequeuedSession.SessionId} assigned to Agent {agent.Id} : {agent.AssignedSessions} assigned sessions with capacity of {agent.Capacity} at {DateTime.Now}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No available agents.");
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Session {session.SessionId} is inactive. Dequeuing.");
+                    _queue.Dequeue();
+                }
+                
             }
-            else
-            {
-                Console.WriteLine("No available agents.");
-                break;
-            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception Error: {ex.ToString()}");
         }
     }
 
@@ -121,6 +121,27 @@ public class ChatQueueService : IChatQueueService
         {
             Console.WriteLine("No available agents.");
             return null;
+        }
+    }
+
+    public void PollSessions()
+    {
+        try
+        {
+            if (_queue.Any())
+            {
+                var session = _queue.Peek();
+
+                if ((DateTime.Now - session.PolledDate).TotalSeconds > Constants.POLLING_MAX_WAIT_TIME)
+                {
+                    session.IsActive = false;
+                    Console.WriteLine($"Session {session.SessionId} poll time limit. Set to Inactive.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception Error: {ex.ToString()}");
         }
     }
 
