@@ -6,13 +6,18 @@ public class AgentCoordinatorWorker : BackgroundService
 {
     private readonly ILogger<AgentCoordinatorWorker> _logger;
     private readonly IServiceProvider _serviceProvider;
-    public AgentCoordinatorWorker(ILogger<AgentCoordinatorWorker> logger, IServiceProvider serviceProvider)
+    private readonly IConfiguration _configuration;
+
+    public AgentCoordinatorWorker(ILogger<AgentCoordinatorWorker> logger, IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _configuration = configuration;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var timeDelay = _configuration.GetValue<int?>("Application:AssignAgentTimeDelay") ?? 10000;
+
         while (!stoppingToken.IsCancellationRequested)
         {
             using (var scope = _serviceProvider.CreateScope())
@@ -21,7 +26,7 @@ public class AgentCoordinatorWorker : BackgroundService
 
                 queueService.AssignToAgent();
             }
-            await Task.Delay(10000, stoppingToken); // Delay for 10 seconds to simulate worker interval
+            await Task.Delay(timeDelay, stoppingToken); // Delay for (Default)10 seconds to simulate worker interval
         }
     }
 

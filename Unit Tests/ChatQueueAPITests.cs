@@ -10,13 +10,6 @@ namespace ChatQueue.Unit_Tests;
 
 public class ChatQueueAPITests 
 {
-    readonly HttpClient _client;
-
-    public ChatQueueAPITests()
-    {
-        
-    }
-
     [Fact]
     public void Should_Return_Ok()
     {
@@ -44,6 +37,8 @@ public class ChatQueueAPITests
 
             //Assert
             Assert.True((int?)HttpStatusCode.OK == ((IStatusCodeActionResult)result).StatusCode);
+
+            Thread.Sleep(1000);
         }
     }
 
