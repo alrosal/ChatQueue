@@ -34,8 +34,10 @@ public class ChatQueueService : IChatQueueService
 
             if (_queue.Count >= queueCapacity)
             {
-                // Add Overflow Team if Office Hours
-                if (DateTime.Now.Hour >= Constants.OFFICE_HOUR_START && DateTime.Now.Hour <= Constants.OFFICE_HOUR_END)
+                // Add Overflow Team if Office Hours and overflow team is not yet added
+                if (DateTime.Now.Hour >= Constants.OFFICE_HOUR_START
+                    && DateTime.Now.Hour <= Constants.OFFICE_HOUR_END
+                    && _availableAgents.FirstOrDefault(o => o.Team.IsOverflowTeam) == null)
                 {
                     _availableAgents.AddRange(_agents.Where(o => o.Team.IsOverflowTeam));
                 }
