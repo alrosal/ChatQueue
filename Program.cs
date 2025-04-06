@@ -1,5 +1,6 @@
 using ChatQueue.Mocker;
 using ChatQueue.Services;
+using ChatQueue.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IMockData, MockData>();
 builder.Services.AddSingleton<IChatQueueService, ChatQueueService>();
+builder.Services.AddHostedService<AgentCoordinatorWorker>();
+builder.Services.AddHostedService<PollWorker>();
 
 var app = builder.Build();
 

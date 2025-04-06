@@ -16,4 +16,16 @@ public class AgentViewModel
 
     public SeniorityLevel Seniority { get; set; }
 
+    public int Capacity => Seniority switch
+    {
+        SeniorityLevel.Junior => 4,
+        SeniorityLevel.MidLevel => 6,
+        SeniorityLevel.Senior => 8,
+        SeniorityLevel.TeamLead => 5,
+        _ => 4 // Default capacity for Junior seniority
+    };
+
+
+    public int AssignedSessions { get; set; }
+
 }

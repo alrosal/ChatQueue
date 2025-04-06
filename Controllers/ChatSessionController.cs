@@ -18,14 +18,14 @@ namespace ChatQueue.Controllers
         [Route("api/requestagent")]
         public IActionResult RequestAgent(string sessionId)
         {
-            Console.WriteLine($"Requesting Agent for Session ID: {sessionId}");
-
             var result = _chatQueueService.AddToQueue(sessionId);
 
             if (result)
             {
                 return Ok(new { Message = $"Chat Session is queued for Session Id: {sessionId}" });
             }
+
+            Console.WriteLine($"Session ID: {sessionId} was not in queue.");
 
             return BadRequest(new { Message = "Chat Session Queue is full." });
         }

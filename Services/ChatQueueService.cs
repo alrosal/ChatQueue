@@ -28,7 +28,9 @@ public class ChatQueueService : IChatQueueService
                 return false; // No available agents
             }
 
-            int queueCapacity = _currentShiftingTeam.Capacity;
+            int queueCapacity = Convert.ToInt16(Math.Floor((double)_currentShiftingTeam.Capacity * 1.5));
+
+            Console.WriteLine($"Requesting Agent for Session ID: {sessionId} with Team Capacity of {queueCapacity} at {DateTime.Now}.");
 
             if (_queue.Count >= queueCapacity)
             {
@@ -59,33 +61,36 @@ public class ChatQueueService : IChatQueueService
         }
     }
 
-    public void MonitorQueue()
+    public void PollQueue()
     {
-        while (true)
+        while (_queue.Any())
         {
             foreach (var session in _queue)
             {
                 if ((DateTime.Now - session.PolledDate).TotalSeconds > 3)
                 {
-                    session.IsActive = false;
                     _queue.Dequeue();
+                    Console.WriteLine($"Session {session.SessionId} was not assigned. Removed from Queue.");
+
+                    if (_queue == null || _queue.Count < 1)
+                        break;
                 }
             }
-            Thread.Sleep(1000); // Poll every 1 second
         }
     }
 
-    public void AssignChats()
+    public void AssignToAgent()
     {
         while (_queue.Any())
         {
             foreach (var agent in _availableAgents)
             {
-                //if (agent.Capacity > 0 && _queue.TryDequeue(out var session))
-                //{
-                //    session.AgentId = agent.Id;
-                //    _agents.Capacity--;
-                //}
+                if (agent.AssignedSessions <= agent.Capacity && _queue.Any())
+                {
+                    var session = _queue.Dequeue();
+                    agent.AssignedSessions = agent.AssignedSessions+1;
+                    Console.WriteLine($"Session {session.SessionId} assigned to Agent {agent.Id} : {agent.AssignedSessions} assigned sessions with capacity of {agent.Capacity} at {DateTime.Now}.");
+                }
             }
         }
     }
