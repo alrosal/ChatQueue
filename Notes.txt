@@ -1,0 +1,18 @@
+max queue length = team capacity * 1.5
+
+if office hours (8-16 hours) and max queue length, add overflow team
+
+max concurrency (chats per agent) = 10 
+
+efficiency multiplier:
+junior = 10 * 0.4 = 4
+midlevel = 10 * 0.6 = 6 
+senior = 10 * 0.8 = 8
+teamlead = 10 * 0.5 = 5
+
+Team Capacity:
+Team A = 5 + 12 + 4 = 21
+Team B = 8 + 6 + 8 = 22
+Team C = 12
+OT = 24
+
