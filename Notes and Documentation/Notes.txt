@@ -16,3 +16,5 @@ Team B = 8 + 6 + 8 = 22
 Team C = 12
 OT = 24
 
+
+polling every 1 sec; 3 sec max set to inactive session
