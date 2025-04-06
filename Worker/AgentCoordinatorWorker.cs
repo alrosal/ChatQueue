@@ -21,7 +21,7 @@ public class AgentCoordinatorWorker : BackgroundService
 
                 queueService.AssignToAgent();
             }
-            await Task.Delay(10000, stoppingToken);
+            await Task.Delay(10000, stoppingToken); // Delay for 10 seconds to simulate worker interval
         }
     }
 

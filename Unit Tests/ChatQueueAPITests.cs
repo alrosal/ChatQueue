@@ -30,4 +30,21 @@ public class ChatQueueAPITests
         Assert.True((int?)HttpStatusCode.OK == ((IStatusCodeActionResult)result).StatusCode);
     }
 
+    [Fact]
+    public void Should_Assign_Agent()
+    {
+        //Arrange
+        var controller = new ChatSessionController(new ChatQueueService(new MockData()));
+        var maximumQueueCapacity = 20; // Assuming this is the maximum queue capacity
+
+        //Act
+        for (int i = 0; i < maximumQueueCapacity; i++)
+        {
+            var result = controller.RequestAgent($"Session-{i}");
+
+            //Assert
+            Assert.True((int?)HttpStatusCode.OK == ((IStatusCodeActionResult)result).StatusCode);
+        }
+    }
+
 }

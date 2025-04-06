@@ -83,15 +83,34 @@ public class ChatQueueService : IChatQueueService
     {
         while (_queue.Any())
         {
-            foreach (var agent in _availableAgents)
+            var agent = GetNextAvailableAgent();
+
+            if (agent != null)
             {
-                if (agent.AssignedSessions <= agent.Capacity && _queue.Any())
-                {
-                    var session = _queue.Dequeue();
-                    agent.AssignedSessions = agent.AssignedSessions+1;
-                    Console.WriteLine($"Session {session.SessionId} assigned to Agent {agent.Id} : {agent.AssignedSessions} assigned sessions with capacity of {agent.Capacity} at {DateTime.Now}.");
-                }
+                var session = _queue.Dequeue();
+                agent.AssignedSessions = agent.AssignedSessions + 1;
+                Console.WriteLine($"Session {session.SessionId} assigned to Agent {agent.Id} : {agent.AssignedSessions} assigned sessions with capacity of {agent.Capacity} at {DateTime.Now}.");
             }
+            else
+            {
+                Console.WriteLine("No available agents.");
+                break;
+            }
+        }
+    }
+
+    private AgentViewModel GetNextAvailableAgent()
+    {
+        var nextAvailableAgent = _availableAgents.FirstOrDefault(agent => agent.AssignedSessions < agent.Capacity);
+        if (nextAvailableAgent != null)
+        {
+            Console.WriteLine($"Next available agent is Agent ID-{nextAvailableAgent.Id} with {nextAvailableAgent.Capacity - nextAvailableAgent.AssignedSessions} remaining capacity.");
+            return nextAvailableAgent;
+        }
+        else
+        {
+            Console.WriteLine("No available agents.");
+            return null;
         }
     }
 
