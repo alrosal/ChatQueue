@@ -6,5 +6,6 @@
         public int ShiftHourStart { get; set; }
         public int ShiftHourEnd { get; set; }        
         public int Capacity { get; set; }
+        public bool IsOverflowTeam { get; set; } = false;
     }
 }

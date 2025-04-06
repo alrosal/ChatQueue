@@ -20,7 +20,7 @@ public class PollWorker : BackgroundService
                 var queueService = scope.ServiceProvider.GetRequiredService<IChatQueueService>();
                 //queueService.PollQueue();
             }
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(Constants.POLLING_INTERVAL, stoppingToken);
         }
     }
 }

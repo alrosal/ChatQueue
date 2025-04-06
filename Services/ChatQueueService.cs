@@ -28,13 +28,21 @@ public class ChatQueueService : IChatQueueService
                 return false; // No available agents
             }
 
-            int queueCapacity = Convert.ToInt16(Math.Floor((double)_currentShiftingTeam.Capacity * 1.5));
+            int queueCapacity = Convert.ToInt16(Math.Floor((double)_currentShiftingTeam.Capacity * Constants.TEAM_CAPACITY_MULTIPLIER));
 
             Console.WriteLine($"Requesting Agent for Session ID: {sessionId} with Team Capacity of {queueCapacity} at {DateTime.Now}.");
 
             if (_queue.Count >= queueCapacity)
             {
-                return false;
+                // Add Overflow Team if Office Hours
+                if (DateTime.Now.Hour >= Constants.OFFICE_HOUR_START && DateTime.Now.Hour <= Constants.OFFICE_HOUR_END)
+                {
+                    _availableAgents.AddRange(_agents.Where(o => o.Team.IsOverflowTeam));
+                }
+                else
+                {
+                    return false;
+                }
             }
 
             var newSession = new ChatSessionViewModel { SessionId = sessionId };

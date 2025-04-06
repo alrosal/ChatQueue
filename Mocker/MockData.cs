@@ -138,7 +138,7 @@ public class MockData : IMockData
         var currentHour = DateTime.Now.Hour;
         var teams = GetTeamList();
 
-        var currentTeam = teams.FirstOrDefault(o => o.ShiftHourStart <= currentHour && currentHour <= o.ShiftHourEnd && o.Id != 4);
+        var currentTeam = teams.FirstOrDefault(o => o.ShiftHourStart <= currentHour && currentHour <= o.ShiftHourEnd && o.IsOverflowTeam == false);
 
         return currentTeam;
     }
@@ -177,7 +177,8 @@ public class MockData : IMockData
                 Name = "Overflow Team",
                 ShiftHourStart = 0,
                 ShiftHourEnd = 24,
-                Capacity = 24
+                Capacity = 24,
+                IsOverflowTeam = true
             }
         };
     }

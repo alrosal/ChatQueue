@@ -16,7 +16,7 @@ public class AgentCoordinatorWorker : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var timeDelay = _configuration.GetValue<int?>("Application:AssignAgentTimeDelay") ?? 10000;
+        var timeDelay = _configuration.GetValue<int?>("Application:AssignAgentTimeDelay") ?? Constants.DEFAULT_AGENT_COORDINATION_TIME_DELAY;
 
         while (!stoppingToken.IsCancellationRequested)
         {
